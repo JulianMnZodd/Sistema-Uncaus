@@ -19,9 +19,7 @@ from django.contrib.auth.models import AbstractUser, Group, Permission
 #         verbose_name=('user permissions'),
 #     )
 
-
 class Persona(models.Model):
-    #user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='persona')
     idpersona = models.AutoField(db_column='idPersona', primary_key=True)  # Field name made lowercase.
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
@@ -33,31 +31,34 @@ class Persona(models.Model):
     fecha_nacimiento = models.DateTimeField()
 
     class Meta:
-        
+        managed = False
         db_table = 'persona'
+
+
+class Recepcionista(models.Model):
+    persona_idpersona = models.OneToOneField(Persona, models.DO_NOTHING, db_column='Persona_idPersona', primary_key=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'recepcionista'
+
+class Enfermero(models.Model):
+    persona_idpersona = models.OneToOneField(Persona, models.DO_NOTHING, db_column='Persona_idPersona', primary_key=True)  # Field name made lowercase.
+    matricula = models.CharField(max_length=45)
+
+    class Meta:
+        managed = False
+        db_table = 'enfermero'
         
+
 class Medico(models.Model):
-    persona_idpersona = models.OneToOneField('Persona', db_column='Persona_idPersona', primary_key=True,on_delete=models.CASCADE)  # Field name made lowercase.
+    persona_idpersona = models.OneToOneField(Persona, models.DO_NOTHING, db_column='Persona_idPersona', primary_key=True)  # Field name made lowercase.
     especializacion = models.CharField(max_length=45)
     matricula = models.CharField(max_length=45)
 
     class Meta:
+        managed = False
         db_table = 'medico'
         
-        
-class Enfermero(models.Model):
-    persona_idpersona = models.OneToOneField('Persona',  db_column='Persona_idPersona', primary_key=True, on_delete=models.CASCADE)  # Field name made lowercase.
-    matricula = models.CharField(max_length=45)
-
-    class Meta:
-        
-        db_table = 'enfermero'
 
 
-class Recepcionista(models.Model):
-    persona_idpersona = models.OneToOneField(Persona,  db_column='Persona_idPersona', primary_key=True, on_delete=models.CASCADE)  # Field name made lowercase.
-
-    class Meta:
-        
-        db_table = 'recepcionista'
-        
