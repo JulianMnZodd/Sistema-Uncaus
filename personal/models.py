@@ -31,7 +31,7 @@ class Persona(models.Model):
     fecha_nacimiento = models.DateTimeField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'persona'
 
 
@@ -39,7 +39,7 @@ class Recepcionista(models.Model):
     persona_idpersona = models.OneToOneField(Persona, models.DO_NOTHING, db_column='Persona_idPersona', primary_key=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'recepcionista'
 
 class Enfermero(models.Model):
@@ -47,7 +47,7 @@ class Enfermero(models.Model):
     matricula = models.CharField(max_length=45)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'enfermero'
         
 
@@ -57,7 +57,7 @@ class Medico(models.Model):
     matricula = models.CharField(max_length=45)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'medico'
         
 

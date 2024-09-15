@@ -1,5 +1,6 @@
-from django.shortcuts import render, get_object_or_404
-from .models import Habitacion
+from django.http import HttpResponse,JsonResponse
+from django.shortcuts import redirect, render, get_object_or_404
+from .models import Habitacion,Cama
 
 def lista_habitaciones(request):
     habitaciones = Habitacion.objects.prefetch_related('camas').all()  # Traemos todas las habitaciones con sus camas
@@ -26,4 +27,5 @@ def habitacion_detalle(request, habitacion_id):
         "habitacion": habitacion,
         "camas": camas_context
     })
+
 

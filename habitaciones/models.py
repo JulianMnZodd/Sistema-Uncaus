@@ -1,5 +1,5 @@
 from django.db import models
-
+from pacientes.models import Paciente
 # Create your models here.
 
 class Sector(models.Model):
@@ -9,7 +9,7 @@ class Sector(models.Model):
     piso = models.IntegerField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'sector'
 
 class Habitacion(models.Model):
@@ -27,6 +27,7 @@ class Habitacion(models.Model):
         return f"Habitación #{self.numero}"
 
     class Meta:
+        managed= True
         db_table = 'habitacion'
 
 class Cama(models.Model):
@@ -36,16 +37,15 @@ class Cama(models.Model):
         ('O', 'Ocupada'),
     )
     
-    
     idcama = models.AutoField(db_column='idCama', primary_key=True)  # Field name made lowercase.
-    idhabitacion = models.ForeignKey(Habitacion, models.DO_NOTHING, db_column='idHabitacion', related_name='camas')  # Relación inversa.
+    habitacion = models.ForeignKey(Habitacion, models.DO_NOTHING, db_column='idHabitacion', related_name='camas')  # Relación inversa.
     estado = models.CharField(max_length=1, choices=ESTADOS, default='L')
-    paciente = models.CharField(max_length=256, blank=True, null=True)  # Nombre del paciente o vacío si está libre.
-    
+    paciente = models.ForeignKey(Paciente, models.DO_NOTHING, db_column='idPaciente',blank=True,null=True)  # Field name made lowercase.
     def __str__(self):
         return f"Cama en {self.habitacion.numero}"
 
     class Meta:
+        managed: True
         db_table = 'cama'
 
 

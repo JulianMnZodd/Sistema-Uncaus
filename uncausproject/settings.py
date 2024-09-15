@@ -39,12 +39,22 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    "daphne",
     'django.contrib.staticfiles',
+    'channels',#.--> Para actualizar el cambio de estados de la cama en tiempo real
     'compressor', # --> para comprimir el css y js
     'habitaciones',
     'pacientes',
     'personal',
 ]
+
+ASGI_APPLICATION = 'uncausproject.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -80,23 +90,23 @@ WSGI_APPLICATION = 'uncausproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+DATABASES = {
+     'default': {
+         'ENGINE': 'django.db.backends.sqlite3',
+         'NAME': BASE_DIR / 'db.sqlite3',
+     }
+}
+
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'dbproject',
+#         'USER': 'root',
+#         'PASSWORD': 'root',
+#         'HOST': 'localhost',  # O la IP de tu servidor de base de datos
+#         'PORT': '3306',        # El puerto de MySQL, por defecto es 3306
 #     }
 # }
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dbproject',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': 'localhost',  # O la IP de tu servidor de base de datos
-        'PORT': '3306',        # El puerto de MySQL, por defecto es 3306
-    }
-}
 
 
 
@@ -136,7 +146,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -144,12 +154,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 #Configuracion compresor 
-COMPRESS_ROOT = BASE_DIR / 'static/'
-
 COMPRESS_ENABLED = True
-
-STATICFILES_FINDERS = [
+COMPRESS_ROOT = os.path.join(BASE_DIR, 'static')
+COMPRESS_URL = '/static/'
+COMPRESS_STORAGE = 'compressor.storage.CompressorFileStorage'
+STATICFILES_FINDERS = (
+    'compressor.finders.CompressorFinder',
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
-]
+)
+
+

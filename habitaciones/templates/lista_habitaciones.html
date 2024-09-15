@@ -9,16 +9,15 @@
     <!-- Reutilizar componente para camas -->
     {% for cama in habitacion.camas.all %}
       <div class="flex flex-col items-center border p-4 rounded-lg">
+        <!-- Agregamos un ID para identificar cada cama -->
         <svg
-          fill="{{ cama.color }}"
+          id="cama-{{ cama.idcama }}"
+          fill="{% if cama.estado == 'O' %}#FF0000{% else %}#00FF00{% endif %}"
           height="150px"
           width="150px"
           version="1.1"
-          id="Layer_1"
           xmlns="http://www.w3.org/2000/svg"
-          xmlns:xlink="http://www.w3.org/1999/xlink"
           viewBox="0 0 511.998 511.998"
-          xml:space="preserve"
         >
         <g>
             <g>
@@ -56,20 +55,59 @@
             </g>
           </g>
         </svg>
-        <p class="text-gray-500">
+        <p class="text-gray-500" id="paciente-{{ cama.idcama }}">
             Paciente: <span class="font-bold">
             {% if cama.estado == 'L' %}
                 Libre
             {% else %}
-                {{ cama.paciente }}
+                {{ cama.paciente.idpaciente.nombre }}
             {% endif %}
             </span>
         </p>
-      </div>
-    {% endfor %}
+        
+        </div>
+      {% endfor %}
   </div>
 
   {% endfor %}
 </div>
+
+        
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var socket = new WebSocket('ws://' + window.location.host + '/ws/camas/');
+  
+    socket.onopen = function(event) {
+        console.log("WebSocket conectado.");
+    };
+  
+    socket.onmessage = function(event) {
+        console.log("Mensaje recibido: ", event.data);
+        var data = JSON.parse(event.data);
+        var camaId = data['idcama'];
+        var estado = data['estado'];
+        var paciente = data['paciente'];
+  
+        var camaSVG = document.getElementById('cama-' + camaId);
+        if (camaSVG) {
+            camaSVG.setAttribute('fill', estado === 'O' ? '#FF0000' : '#00FF00');  // Ejemplo de color basado en estado
+        } else {
+            console.log(`No se encontró el SVG para la cama ID=${camaId}`);
+        }
+  
+        var pacienteInfo = document.getElementById('paciente-' + camaId);
+        if (pacienteInfo) {
+            pacienteInfo.innerHTML = 'Paciente: <span class="font-bold">' + (estado === 'Libre' ? 'Libre' : paciente) + '</span>';
+        } else {
+            console.log(`No se encontró el elemento paciente para la cama ID=${camaId}`);
+        }
+    };
+  
+    socket.onerror = function(error) {
+        console.error("Error en WebSocket: ", error);
+    };
+  });
+  </script>
+  
 
 {% endblock content %}

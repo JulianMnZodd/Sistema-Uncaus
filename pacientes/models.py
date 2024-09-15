@@ -8,7 +8,7 @@ class Paciente(models.Model):
     descripcion = models.CharField(max_length=256)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'paciente'
 
 class Diagnostico(models.Model):
@@ -21,7 +21,7 @@ class Diagnostico(models.Model):
     codigo_cie_10 = models.CharField(db_column='codigo_CIE-10', max_length=10)  # Field name made lowercase. Field renamed to remove unsuitable characters.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'diagnostico'
 
 
@@ -32,7 +32,7 @@ class ObraSocial(models.Model):
     tipo = models.CharField(max_length=70)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'obra_social'
 
 
@@ -44,7 +44,7 @@ class PacienteObraSocial(models.Model):
     nro_afiliado = models.IntegerField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'paciente_obra_social'
 
 
@@ -55,5 +55,5 @@ class SignosVitales(models.Model):
     frecuencia_respiratoria = models.CharField(max_length=45)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'signos_vitales'
