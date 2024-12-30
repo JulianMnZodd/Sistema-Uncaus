@@ -28,7 +28,18 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-#AUTH_USER_MODEL = 'personal.CustomUser'
+#Configuración para el usuario 
+
+AUTH_USER_MODEL = 'personal.Persona'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+LOGIN_REDIRECT_URL = '/'  # Redirige al inicio después de iniciar sesión
+LOGOUT_REDIRECT_URL = '/login/'  # Redirige al login después de cerrar sesión
+LOGIN_URL = 'login'  # Vista de login para decoradores como @login_required
+
+###############################################################
 
 
 # Application definition
@@ -46,6 +57,7 @@ INSTALLED_APPS = [
     'habitaciones',
     'pacientes',
     'personal',
+    'internacion',
 ]
 
 ASGI_APPLICATION = 'uncausproject.asgi.application'

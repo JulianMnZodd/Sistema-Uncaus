@@ -18,10 +18,9 @@ class Habitacion(models.Model):
     numero = models.IntegerField()
     piso = models.IntegerField()
     cantidad_camas = models.IntegerField()
-    es_privada = models.IntegerField()
-    es_vip = models.IntegerField()
+    es_privada = models.BooleanField()
+    es_vip = models.BooleanField()
     tipo = models.CharField(max_length=256)
-    disponibilidad = models.IntegerField()
     
     def __str__(self):
         return f"Habitación #{self.numero}"

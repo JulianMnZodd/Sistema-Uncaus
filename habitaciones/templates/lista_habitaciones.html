@@ -1,14 +1,13 @@
 {% extends "_base.html" %}
 {% load static %} 
 {% block content %}
-
-<div class="max-w-sm rounded overflow-hidden shadow-lg bg-white p-4">
-    {% for habitacion in habitaciones %}
+{% for habitacion in habitaciones %}
+<div class=" flex  max-w-sm rounded overflow-hidden shadow-lg bg-white p-4">
+  <div class="grid grid-cols-2 gap-6">
     <h2 class="text-xl font-bold mb-4 text-center">Habitación #{{ habitacion.numero }}</h2>
-  <div class="grid grid-cols-2 gap-4">
     <!-- Reutilizar componente para camas -->
     {% for cama in habitacion.camas.all %}
-      <div class="flex flex-col items-center border p-4 rounded-lg">
+      <div class="flex flex-col items-center border p-4 rounded-lg gap-4">
         <!-- Agregamos un ID para identificar cada cama -->
         <svg
           id="cama-{{ cama.idcama }}"
@@ -64,19 +63,28 @@
             {% endif %}
             </span>
         </p>
-        
+        <form method="POST" action="{% url 'listar_pacientes' %}">
+          {% csrf_token %}
+          <button class="text-blue-800">
+            {% if cama.estado == 'L' %}
+              Asignar cama
+            {% else %}
+              Liberar cama
+            {% endif %}
+          </button>
+        </form>                
         </div>
       {% endfor %}
   </div>
 
-  {% endfor %}
+  
 </div>
-
+{% endfor %}
         
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     var socket = new WebSocket('ws://' + window.location.host + '/ws/camas/');
-  
+    
     socket.onopen = function(event) {
         console.log("WebSocket conectado.");
     };
@@ -90,16 +98,22 @@
   
         var camaSVG = document.getElementById('cama-' + camaId);
         if (camaSVG) {
-            camaSVG.setAttribute('fill', estado === 'O' ? '#FF0000' : '#00FF00');  // Ejemplo de color basado en estado
+            camaSVG.setAttribute('fill', estado === 'O' ? '#FF0000' : '#00FF00');
         } else {
             console.log(`No se encontró el SVG para la cama ID=${camaId}`);
         }
   
         var pacienteInfo = document.getElementById('paciente-' + camaId);
         if (pacienteInfo) {
-            pacienteInfo.innerHTML = 'Paciente: <span class="font-bold">' + (estado === 'Libre' ? 'Libre' : paciente) + '</span>';
+            pacienteInfo.innerHTML = 'Paciente: <span class="font-bold">' + (estado === 'L' ? 'Libre' : paciente) + '</span>';
         } else {
             console.log(`No se encontró el elemento paciente para la cama ID=${camaId}`);
+        }
+  
+        // Actualizar el botón según el estado de la cama
+        var botonCama = pacienteInfo.closest('div').querySelector('button');
+        if (botonCama) {
+            botonCama.textContent = (estado === 'L' ? 'Asignar cama' : 'Liberar cama');
         }
     };
   
@@ -107,6 +121,7 @@
         console.error("Error en WebSocket: ", error);
     };
   });
+  
   </script>
   
 

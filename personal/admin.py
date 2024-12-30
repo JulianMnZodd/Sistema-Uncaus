@@ -4,4 +4,7 @@ from personal.models import Persona,Medico,Recepcionista,Enfermero
 
 admin.site.register(Persona)
 admin.site.register(Medico)
+admin.site.register(Recepcionista)
+admin.site.register(Enfermero)
+
 

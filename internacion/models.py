@@ -1,7 +1,7 @@
 from django.db import models
 from personal.models import Enfermero,Medico
-from pacientes.models import Paciente,SignosVitales
-from habitaciones.models import Habitacion
+from pacientes.models import Paciente
+from habitaciones.models import Habitacion,Cama
 
 # Create your models here.
 
@@ -14,19 +14,19 @@ class Atencion(models.Model):
     detalles = models.CharField(max_length=256)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'atencion'
 
 class Internacion(models.Model):
     idinternacion = models.AutoField(db_column='idInternacion', primary_key=True)  # Field name made lowercase.
     idpaciente = models.ForeignKey(Paciente, models.DO_NOTHING, db_column='idPaciente')  # Field name made lowercase.
-    idhabitacion = models.ForeignKey(Habitacion, models.DO_NOTHING, db_column='idHabitacion')  # Field name made lowercase.
+    cama = models.ForeignKey(Cama, on_delete=models.CASCADE)
     fecha_admicion = models.DateTimeField()
-    fecha_alta = models.DateTimeField()
+    fecha_alta = models.DateTimeField(null=True, blank=True)
     nota_ingreso = models.CharField(max_length=256)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'internacion'
 
 
@@ -37,11 +37,21 @@ class Medicacion(models.Model):
     hora_medicacion = models.CharField(max_length=45)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'medicacion'
+        
+class SignosVitales(models.Model):
+    idsignos_vitales = models.AutoField(db_column='idSignos_vitales', primary_key=True)  # Field name made lowercase.
+    temperatura_corporal = models.CharField(max_length=45)
+    pulso = models.CharField(max_length=45)
+    frecuencia_respiratoria = models.CharField(max_length=45)
+
+    class Meta:
+        managed = True
+        db_table = 'signos_vitales'
 
 class Seguimiento(models.Model):
-    idtratamiento = models.AutoField(db_column='idTratamiento', primary_key=True)  # Field name made lowercase.
+    idseguimento = models.AutoField(db_column='idSeguimiento', primary_key=True)  # Field name made lowercase.
     idenfermero = models.ForeignKey(Enfermero, models.DO_NOTHING, db_column='idEnfermero')  # Field name made lowercase.
     idpaciente = models.ForeignKey(Paciente, models.DO_NOTHING, db_column='idPaciente')  # Field name made lowercase.
     observacion = models.CharField(max_length=200)
@@ -49,6 +59,6 @@ class Seguimiento(models.Model):
     signos_vitales = models.ForeignKey(SignosVitales, models.DO_NOTHING, db_column='signos_vitales')
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'seguimiento'
-        
+    

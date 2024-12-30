@@ -1,15 +1,23 @@
 from django.db import models
-from personal.models import Persona
-# Create your models here.
 
 class Paciente(models.Model):
-    idpaciente = models.OneToOneField(Persona, models.DO_NOTHING, db_column='idPaciente', primary_key=True)  # Field name made lowercase.
+    idpaciente = models.AutoField(db_column='idPaciente', primary_key=True)  # Clave primaria
+    nombre = models.CharField(max_length=50)
+    apellido = models.CharField(max_length=50)
+    dni = models.IntegerField(unique=True)
+    domicilio = models.CharField(max_length=100, blank=True, null=True)
+    telefono = models.CharField(max_length=15, blank=True, null=True)
+    fecha_nacimiento = models.DateField()
+    genero = models.CharField(max_length=10, choices=[('M', 'Masculino'), ('F', 'Femenino')])
     obra_social = models.CharField(max_length=45)
     descripcion = models.CharField(max_length=256)
 
     class Meta:
-        managed = True
+        managed= True
         db_table = 'paciente'
+
+    def __str__(self):
+        return f"{self.nombre} {self.apellido}"
 
 class Diagnostico(models.Model):
     iddiagnostico = models.AutoField(db_column='idDiagnostico', primary_key=True)  # Field name made lowercase.
@@ -48,12 +56,4 @@ class PacienteObraSocial(models.Model):
         db_table = 'paciente_obra_social'
 
 
-class SignosVitales(models.Model):
-    idsignos_vitales = models.AutoField(db_column='idSignos_vitales', primary_key=True)  # Field name made lowercase.
-    temperatura_corporal = models.CharField(max_length=45)
-    pulso = models.CharField(max_length=45)
-    frecuencia_respiratoria = models.CharField(max_length=45)
 
-    class Meta:
-        managed = True
-        db_table = 'signos_vitales'

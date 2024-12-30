@@ -1,0 +1,14 @@
+{% extends "_base.html" %} {% block content %} {{error}}
+<form method="post">
+  {% csrf_token %}
+  <h2>Datos de la Persona</h2>
+  {{ persona_form.as_p }}
+  
+  <h2>Datos del Médico</h2>
+  {{ medico_form.as_p }}
+
+  <button type="submit">Crear Médico</button>
+</form>
+
+
+{% endblock content %}
