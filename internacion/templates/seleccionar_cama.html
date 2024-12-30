@@ -1,0 +1,31 @@
+{% extends '_base.html' %}
+
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Seleccionar cama para {{ paciente.idpaciente.nombre }}</h2>
+
+<div class="grid grid-cols-2 gap-4">
+  {% for habitacion in habitaciones %}
+  <div class="rounded overflow-hidden shadow-lg p-4 bg-white">
+    <h3 class="text-lg font-bold mb-2">Habitación #{{ habitacion.numero }}</h3>
+    <div class="grid grid-cols-2 gap-2">
+      {% for cama in habitacion.camas.all %}
+      <div class="border p-2 rounded">
+        <p>Cama ID: {{ cama.idcama }}</p>
+        <p>Estado: {{ cama.get_estado_display }}</p>
+        {% if cama.estado == 'L' %}
+          <form method="POST" action="{% url 'asignar_cama' cama.idcama %}">
+            {% csrf_token %}
+            <input type="hidden" name="paciente_id" value="{{ paciente.idpaciente.idpersona }}">
+            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Asignar esta cama</button>
+          </form>
+        {% else %}
+          <p class="text-red-500">Ocupada</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock content %}

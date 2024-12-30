@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 
-
-class HabitacionesConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
+class TuAppConfig(AppConfig):
     name = 'habitaciones'
+
+    def ready(self):
+        import habitaciones.signals  # Importa los signals cuando la app esté lista

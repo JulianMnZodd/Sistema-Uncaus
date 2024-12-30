@@ -1,0 +1,14 @@
+{% extends "_base.html" %} {% block content %}
+<form method="post">
+    {% csrf_token %}
+    <h2>Datos de la Persona</h2>
+    {{ persona_form.as_p }}
+    
+    <h2>Datos del Enfermero</h2>
+    {{ enfermero_form.as_p }}
+
+    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Crear Enfermero</button>
+</form>
+
+
+{% endblock content %}
