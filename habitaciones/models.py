@@ -23,7 +23,7 @@ class Habitacion(models.Model):
     tipo = models.CharField(max_length=256)
     
     def __str__(self):
-        return f"Habitación #{self.numero}"
+        return f"{self.numero}"
 
     class Meta:
         managed= True
@@ -41,7 +41,7 @@ class Cama(models.Model):
     estado = models.CharField(max_length=1, choices=ESTADOS, default='L')
     paciente = models.ForeignKey(Paciente, models.DO_NOTHING, db_column='idPaciente',blank=True,null=True)  # Field name made lowercase.
     def __str__(self):
-        return f"Cama en {self.habitacion.numero}"
+        return f"{self.habitacion.numero}"
 
     class Meta:
         managed: True
