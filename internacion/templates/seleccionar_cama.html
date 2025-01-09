@@ -1,7 +1,7 @@
 {% extends '_base.html' %}
 
 {% block content %}
-<h2 class="text-xl font-bold mb-4">Seleccionar cama para {{ paciente.idpaciente.nombre }}</h2>
+<h2 class="text-xl font-bold mb-4">Seleccionar cama para {{ paciente.nombre }}</h2>
 
 <div class="grid grid-cols-2 gap-4">
   {% for habitacion in habitaciones %}
@@ -15,7 +15,7 @@
         {% if cama.estado == 'L' %}
           <form method="POST" action="{% url 'asignar_cama' cama.idcama %}">
             {% csrf_token %}
-            <input type="hidden" name="paciente_id" value="{{ paciente.idpaciente.idpersona }}">
+            <input type="hidden" name="paciente_id" value="{{ paciente.idpaciente}}">
             <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Asignar esta cama</button>
           </form>
         {% else %}

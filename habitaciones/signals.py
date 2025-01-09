@@ -19,6 +19,6 @@ def cama_post_save(sender, instance, **kwargs):
             "type": "send_cama_update",
             "idcama": instance.idcama,
             "estado": instance.estado,
-            "paciente": instance.paciente.idpaciente.nombre if instance.paciente else 'Libre',
+            "paciente": instance.paciente.nombre if instance.paciente else 'Libre',
         }
     )
