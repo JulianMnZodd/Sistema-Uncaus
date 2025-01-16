@@ -26,7 +26,14 @@
       <td class="border px-4 py-2">{{ internacion.fecha_alta }}</td>
       <td class="border px-4 py-2">{{ internacion.nota_ingreso }}</td>
       <td class="border px-4 py-2">
+        {% if es_medico %}
         <a href="{% url 'crear_atencion' internacion.idpaciente.idpaciente %}" class="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded">Crear Atención</a>
+        {% elif es_enfermero %}
+        <a href="{% url 'seguimiento' internacion.idpaciente.idpaciente %}" class="bg-green-500 hover:bg-green-700 text-black font-bold py-2 px-4 rounded">Crear seguimiento</a>
+        {% endif %}
+      </td>
+      <td class="border px-4 py-2">
+        <a href="{% url 'listar_seguimientos' internacion.idpaciente.idpaciente %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Ver Seguimientos</a>
       </td>
     </tr>
     {% endfor %}
