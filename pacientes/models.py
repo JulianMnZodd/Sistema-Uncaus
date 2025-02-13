@@ -6,11 +6,19 @@ class Paciente(models.Model):
     apellido = models.CharField(max_length=50)
     dni = models.IntegerField(unique=True)
     domicilio = models.CharField(max_length=100, blank=True, null=True)
+    localidad = models.CharField(max_length=50, blank=True, null=True)
+    provincia = models.CharField(max_length=50, blank=True, null=True)
     telefono = models.CharField(max_length=15, blank=True, null=True)
     fecha_nacimiento = models.DateField()
     genero = models.CharField(max_length=10, choices=[('M', 'Masculino'), ('F', 'Femenino')])
     obra_social = models.CharField(max_length=45)
     descripcion = models.CharField(max_length=256)
+    diabetes = models.BooleanField()
+    hipertension = models.BooleanField()
+    fumador = models.BooleanField()
+    alergias = models.CharField(max_length=256,blank=True, null=True)
+    antecedentes = models.CharField(max_length=256,blank=True, null=True)
+    cirugias = models.CharField(max_length=256,blank=True, null=True)
 
     class Meta:
         managed= True

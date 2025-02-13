@@ -1,0 +1,19 @@
+{% extends '_base.html' %}
+
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Reserva de Cama ID: {{ cama.idcama }}</h2>
+
+<p><strong>Médico:</strong> {{ reserva.medico.persona.first_name }} {{ reserva.medico.apellido }}</p>
+<p><strong>Fecha de Reserva:</strong> {{ reserva.fecha_reserva }}</p>
+<p><strong>Fecha de Expiración:</strong> {{ reserva.fecha_expiracion }}</p>
+
+
+<form method="POST" action="{% url 'liberar_cama' cama.idcama %}">
+    {% csrf_token %}
+    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4">Liberar Cama</button>
+  </form>
+  
+  <a href="{% url 'asignar_cama' cama.idcama %}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4">Asignar Cama</a>
+  
+  <a href="{% url 'lista_habitaciones' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Volver a Habitaciones</a>
+{% endblock content %}

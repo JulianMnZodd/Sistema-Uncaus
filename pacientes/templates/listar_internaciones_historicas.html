@@ -1,0 +1,37 @@
+<!-- filepath: /C:/Users/julia/Documents/sistemuncaus/pacientes/templates/pacientes/listar_internaciones_historicas.html -->
+{% extends '_base.html' %}
+
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Internaciones Históricas de {{ paciente.nombre }} {{ paciente.apellido }}</h2>
+
+<table class="table-auto w-full">
+  <thead>
+    <tr>
+      <th class="px-4 py-2">ID Internación</th>
+      <th class="px-4 py-2">Fecha de Ingreso</th>
+      <th class="px-4 py-2">Fecha de Alta</th>
+      <th class="px-4 py-2">Sector</th>
+      <th class="px-4 py-2">habitación</th>
+      <th class="px-4 py-2">Cama</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for internacion in internaciones %}
+    <tr>
+      <td class="border px-4 py-2">{{ internacion.idinternacion }}</td>
+      <td class="border px-4 py-2">{{ internacion.fecha_ingreso }}</td>
+      <td class="border px-4 py-2">{{ internacion.fecha_alta }}</td>
+      <td class="border px-4 py-2">{{ internacion.cama.habitacion.idsector.idsector }}</td>
+      <td class="border px-4 py-2">{{ internacion.cama.habitacion }}</td>
+      <td class="border px-4 py-2">{{ internacion.cama.idcama }}</td>
+      <td class="border px-4 py-2">
+        <a href="{% url 'listar_seguimientos' internacion.idinternacion %}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Ver Seguimientos</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{% url 'listar_pacientes' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Volver a Pacientes</a>
+
+{% endblock content %}

@@ -1,0 +1,23 @@
+<!-- filepath: /C:/Users/julia/Documents/sistemuncaus/templates/internacion/reservar_cama.html -->
+{% extends '_base.html' %}
+
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Reservar Cama ID: {{ cama.idcama }}</h2>
+
+<form method="post">
+  {% csrf_token %}
+  <label for="medico_id" class="block text-sm font-medium text-gray-700">Seleccionar Médico</label>
+  <select name="medico_id" id="medico_id" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+    {% for medico in medicos %}
+    <option value="{{ medico.persona_id }}">{{ medico.persona.first_name }} {{ medico.persona.last_name }}</option>
+    {% endfor %}
+  </select>
+  
+  <label for="dias_expiracion" class="block text-sm font-medium text-gray-700 mt-4">Días hasta la expiración</label>
+  <input type="number" name="dias_expiracion" id="dias_expiracion" value="7" min="1" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+  
+  <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4">Reservar</button>
+  <a href="{% url 'lista_habitaciones' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Cancelar</a>
+</form>
+
+{% endblock content %}
