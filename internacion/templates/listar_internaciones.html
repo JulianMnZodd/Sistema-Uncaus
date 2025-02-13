@@ -1,3 +1,4 @@
+<!-- filepath: /C:/Users/julia/Documents/sistemuncaus/templates/internacion/listar_internaciones.html -->
 {% extends '_base.html' %}
 
 {% block content %}
@@ -6,13 +7,14 @@
 <table class="table-auto w-full">
   <thead>
     <tr>
-      <th class="px-4 py-2">ID</th>
+      <th class="px-4 py-2">ID Internación</th>
       <th class="px-4 py-2">Paciente</th>
-      <th class="px-4 py-2">Habitacion</th>
+      <th class="px-4 py-2">Habitación</th>
       <th class="px-4 py-2">Cama</th>
       <th class="px-4 py-2">Fecha de Admisión</th>
       <th class="px-4 py-2">Fecha de Alta</th>
       <th class="px-4 py-2">Nota de Ingreso</th>
+      <th class="px-4 py-2">Acciones</th>
     </tr>
   </thead>
   <tbody>
@@ -27,13 +29,11 @@
       <td class="border px-4 py-2">{{ internacion.nota_ingreso }}</td>
       <td class="border px-4 py-2">
         {% if es_medico %}
-        <a href="{% url 'crear_atencion' internacion.idpaciente.idpaciente %}" class="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded">Crear Atención</a>
+        <a href="{% url 'crear_atencion' internacion.idinternacion %}" class="flex bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded">Crear Atención</a>
+        <a href="{% url 'listar_atenciones' internacion.idpaciente.idpaciente %}" class="flex bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded">Ver Atenciones</a>
         {% elif es_enfermero %}
-        <a href="{% url 'seguimiento' internacion.idpaciente.idpaciente %}" class="bg-green-500 hover:bg-green-700 text-black font-bold py-2 px-4 rounded">Crear seguimiento</a>
+        <a href="{% url 'seguimiento' internacion.idinternacion %}" class="bg-green-500 hover:bg-green-700 text-black font-bold py-2 px-4 rounded">Crear seguimiento</a>
         {% endif %}
-      </td>
-      <td class="border px-4 py-2">
-        <a href="{% url 'listar_seguimientos' internacion.idpaciente.idpaciente %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Ver Seguimientos</a>
       </td>
     </tr>
     {% endfor %}

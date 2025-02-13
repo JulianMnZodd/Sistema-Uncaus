@@ -1,8 +1,13 @@
+<!-- filepath: /C:/Users/julia/Documents/sistemuncaus/templates/internacion/seguimiento_detalles.html -->
 {% extends '_base.html' %}
 {% load static %}
 
 {% block content %}
 <h2 class="text-xl font-bold mb-4">Detalles del Seguimiento</h2>
+
+<p><strong>ID:</strong> {{ seguimiento.idseguimiento }}</p>
+<p><strong>Enfermero:</strong> {{ seguimiento.idenfermero }}</p>
+<p><strong>Observación:</strong> {{ seguimiento.observacion }}</p>
 
 <h3 class="text-lg font-bold mb-2">Medicación</h3>
 <table class="table-auto w-full">
@@ -14,7 +19,7 @@
     </tr>
   </thead>
   <tbody>
-    {% for medicacion in medicaciones %}
+    {% for medicacion in seguimiento.medicaciones.all %}
     <tr>
       <td class="border px-4 py-2">{{ medicacion.tipo }}</td>
       <td class="border px-4 py-2">{{ medicacion.nombre }}</td>
@@ -34,7 +39,7 @@
     </tr>
   </thead>
   <tbody>
-    {% for signo in signos_vitales %}
+    {% for signo in seguimiento.signos_vitales.all %}
     <tr>
       <td class="border px-4 py-2">{{ signo.temperatura_corporal }}</td>
       <td class="border px-4 py-2">{{ signo.pulso }}</td>
@@ -44,6 +49,5 @@
   </tbody>
 </table>
 
-<a href="{% url 'listar_seguimientos' seguimiento.idpaciente.idpaciente %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Volver a Seguimientos</a>
 
 {% endblock content %}

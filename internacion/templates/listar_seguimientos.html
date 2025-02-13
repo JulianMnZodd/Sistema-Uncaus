@@ -1,30 +1,32 @@
+<!-- filepath: /C:/Users/julia/Documents/sistemuncaus/templates/internacion/listar_seguimientos.html -->
 {% extends '_base.html' %}
-{% load static %}
 
 {% block content %}
-<h2 class="text-xl font-bold mb-4">Seguimientos de {{ paciente.nombre }}</h2>
+<h2 class="text-xl font-bold mb-4">Seguimientos de la Internación ID: {{ internacion.idinternacion }}</h2>
 
 <table class="table-auto w-full">
   <thead>
     <tr>
-      <th class="px-4 py-2">ID</th>
+      <th class="px-4 py-2">ID Seguimiento</th>
       <th class="px-4 py-2">Enfermero</th>
       <th class="px-4 py-2">Observación</th>
+      <th class="px-4 py-2">Acción</th>
     </tr>
   </thead>
   <tbody>
     {% for seguimiento in seguimientos %}
     <tr>
-      <td class="border px-4 py-2">{{ seguimiento.idseguimento }}</td>
+      <td class="border px-4 py-2">{{ seguimiento.idseguimiento }}</td>
       <td class="border px-4 py-2">{{ seguimiento.idenfermero.persona.first_name }}</td>
       <td class="border px-4 py-2">{{ seguimiento.observacion }}</td>
       <td class="border px-4 py-2">
-        <a href="{% url 'seguimiento_detalles' seguimiento.idseguimento %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Ver Detalles</a>
+        <a href="{% url 'seguimiento_detalles' seguimiento.idseguimiento %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Ver Detalles</a>
       </td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
-<a href="{% url 'listar_internaciones' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Volver a Internaciones</a>
+
+<a href="{% url 'listar_internaciones' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Volver a Internaciones</a>
 
 {% endblock content %}
