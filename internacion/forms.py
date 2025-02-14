@@ -1,5 +1,5 @@
 from django import forms
-from .models import Atencion, Seguimiento, Medicacion, SignosVitales
+from .models import Diagnostico, Seguimiento, Medicacion, SignosVitales
 from .models import Paciente, Cama
 
 
@@ -22,13 +22,15 @@ class AsignarCamaForm(forms.Form):
         return paciente
 
 
-class AtencionForm(forms.ModelForm):
+class DiagnosticoForm(forms.ModelForm):
     class Meta:
-        model = Atencion
-        fields = ['fecha', 'idmedico_derivado', 'detalles']
+        model = Diagnostico
+        fields = ['fecha', 'detalles', 'gravedad', 'tratamiento','idmedico_derivado']
         widgets = {
             'fecha': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'detalles': forms.Textarea(attrs={'rows': 4}),   
+            'gravedad': forms.TextInput(attrs={'placeholder': 'Ej: Leve'}),
+            'tratamiento': forms.Textarea(attrs={'rows': 4}),
         }
         
 

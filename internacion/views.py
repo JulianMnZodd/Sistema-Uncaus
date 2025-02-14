@@ -2,40 +2,52 @@ from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from habitaciones.models import Cama, Habitacion
-from .forms import AtencionForm, AsignarCamaForm
+from .forms import DiagnosticoForm, AsignarCamaForm
 from .models import Paciente, Medico, Enfermero, Internacion
 
 
+@login_required
 def asignar_cama(request, idcama):
     cama = get_object_or_404(Cama, idcama=idcama)
+    paciente = None
+
     if request.method == "POST":
         form = AsignarCamaForm(request.POST)
         if form.is_valid():
             paciente = form.cleaned_data["paciente"]
-            # fecha_alta = form.cleaned_data["fecha_alta"]
             nota_ingreso = form.cleaned_data["nota_ingreso"]
+            action = request.POST.get('action')
 
-            # Crear una nueva instancia de Internacion
-            internacion = Internacion.objects.create(
-                idpaciente=paciente,
-                fecha_admicion=timezone.now(),
-                cama=cama,
-                # fecha_alta=fecha_alta,
-                nota_ingreso=nota_ingreso,
-            )
+            if action == 'asignar':
+                # Crear una nueva instancia de Internacion
+                internacion = Internacion.objects.create(
+                    idpaciente=paciente,
+                    fecha_admicion=timezone.now(),
+                    cama=cama,
+                    nota_ingreso=nota_ingreso,
+                )
 
-            # Cambiar el estado de la cama a "Ocupada"
-            cama.estado = "O"
-            cama.paciente = paciente
-            cama.save()
+                # Cambiar el estado de la cama a "Ocupada"
+                cama.estado = "O"
+                cama.save()
 
-            # Redirigir a la página que desees después de asignar la cama
-            return redirect("lista_habitaciones")
+                return redirect('lista_habitaciones')
+            elif action == 'generar_pdf':
+                return generar_consentimiento_pdf(request, paciente.idpaciente)
     else:
         form = AsignarCamaForm()
 
-    return render(request, "asignar_cama.html", {"form": form, "cama": cama})
+    return render(request, 'asignar_cama.html', {'form': form, 'cama': cama, 'paciente': paciente})
 
+@login_required
+def generar_consentimiento(request):
+    if request.method == "POST":
+        form = AsignarCamaForm(request.POST)
+        if form.is_valid():
+            paciente = form.cleaned_data["idpaciente"]
+            return generar_consentimiento_pdf(request, paciente.id)
+    else:
+        return redirect('asignar_cama')
 
 def seleccionar_cama(request, paciente_id):
     paciente = get_object_or_404(Paciente, idpaciente=paciente_id)
@@ -65,34 +77,35 @@ def listar_internaciones(request):
 
 
 @login_required
-def crear_atencion(request, internacion_id):
+def crear_diagnostico(request, internacion_id):
     internacion = get_object_or_404(Internacion, idinternacion=internacion_id)
     paciente = internacion.idpaciente
     medico = get_object_or_404(Medico, persona=request.user)  # Usar el campo correcto para obtener el médico logeado
 
-    if Atencion.objects.filter(idpaciente=paciente).exists():
-        return redirect('listar_internaciones')  # Redirigir si ya existe una atención para este paciente
+    # Verificar si ya existe un diagnóstico para esta internación
+    if Diagnostico.objects.filter(idinternacion=internacion).exists():
+        return redirect('detalle_diagnostico', internacion_id=internacion.idinternacion)  # Redirigir al detalle del diagnóstico si ya existe
 
     if request.method == "POST":
-        form = AtencionForm(request.POST)
+        form = DiagnosticoForm(request.POST)
         if form.is_valid():
-            atencion = form.save(commit=False)
-            atencion.idpaciente = paciente
-            atencion.idmedico = medico
-            atencion.save()
-            return redirect("listar_internaciones")  # Asegúrate de tener esta vista y URL configurada
+            diagnostico = form.save(commit=False)
+            diagnostico.idpaciente = paciente
+            diagnostico.idmedico = medico
+            diagnostico.idinternacion = internacion  # Asociar el diagnóstico con la internación actual
+            diagnostico.save()
+            return redirect('detalle_diagnostico', internacion_id=internacion.idinternacion)  # Redirigir al detalle del diagnóstico
     else:
-        form = AtencionForm()
+        form = DiagnosticoForm()
 
-    return render(request, 'crear_atencion.html', {'form': form, 'paciente': paciente})
+    return render(request, 'crear_diagnostico.html', {'form': form, 'paciente': paciente})
 
-from .models import Atencion
+from .models import Diagnostico
 @login_required
-def listar_atenciones(request, paciente_id):
-    paciente = get_object_or_404(Paciente, idpaciente=paciente_id)
-    atenciones = Atencion.objects.filter(idPaciente=paciente)
-    return render(request, 'listar_atenciones.html', {'paciente': paciente, 'atenciones': atenciones})
-
+def detalle_diagnostico(request, internacion_id):
+    internacion = get_object_or_404(Internacion, idinternacion=internacion_id)
+    diagnostico = get_object_or_404(Diagnostico, idinternacion=internacion)
+    return render(request, 'detalle_diagnostico.html', {'internacion': internacion, 'diagnostico': diagnostico})
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -170,3 +183,51 @@ def seguimiento_detalles(request, seguimiento_id):
     return render(request, 'seguimiento_detalles.html', {
         'seguimiento': seguimiento,
     })
+    
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+
+@login_required
+def generar_consentimiento_pdf(request, paciente_id):
+    paciente = get_object_or_404(Paciente, idpaciente=paciente_id)
+    
+    # Crear el objeto HttpResponse con el encabezado PDF adecuado.
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="consentimiento_{paciente.idpaciente}.pdf"'
+
+    # Crear el objeto PDF, usando el objeto HttpResponse como "archivo".
+    p = canvas.Canvas(response, pagesize=letter)
+    width, height = letter
+
+    # Título del documento
+    p.setFont("Helvetica-Bold", 16)
+    p.drawString(100, height - 100, "Formulario de Consentimiento")
+
+    # Información del paciente
+    p.setFont("Helvetica", 12)
+    p.drawString(100, height - 150, f"Nombre del Paciente: {paciente.nombre} {paciente.apellido}")
+    p.drawString(100, height - 170, f"Fecha de Nacimiento: {paciente.fecha_nacimiento}")
+    p.drawString(100, height - 190, f"Dirección: {paciente.domicilio}")
+    p.drawString(100, height - 210, f"Teléfono: {paciente.telefono}")
+    p.drawString(100, height - 230, f"Email: {paciente.email}")
+
+    # Contenido del consentimiento
+    p.drawString(100, height - 270, "Yo, el paciente mencionado anteriormente, doy mi consentimiento para ser internado en")
+    p.drawString(100, height - 290, "el hospital y recibir el tratamiento médico necesario.")
+    p.drawString(100, height - 310, "Entiendo los riesgos y beneficios del tratamiento propuesto y doy mi consentimiento")
+    p.drawString(100, height - 330, "voluntariamente.")
+
+    # Firma del paciente
+    p.drawString(100, height - 370, "Firma del Paciente: ___________________________")
+    p.drawString(100, height - 390, "Fecha: ___________________________")
+
+    # Firma del médico
+    p.drawString(100, height - 430, "Firma del Médico: ___________________________")
+    p.drawString(100, height - 450, "Fecha: ___________________________")
+
+    # Cerrar el PDF
+    p.showPage()
+    p.save()
+
+    return response

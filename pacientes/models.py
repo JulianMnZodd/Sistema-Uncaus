@@ -19,7 +19,8 @@ class Paciente(models.Model):
     alergias = models.CharField(max_length=256,blank=True, null=True)
     antecedentes = models.CharField(max_length=256,blank=True, null=True)
     cirugias = models.CharField(max_length=256,blank=True, null=True)
-
+    email = models.EmailField(max_length=254, blank=True, null=True)
+    
     class Meta:
         managed= True
         db_table = 'paciente'
@@ -27,18 +28,18 @@ class Paciente(models.Model):
     def __str__(self):
         return f"{self.nombre} {self.apellido}"
 
-class Diagnostico(models.Model):
-    iddiagnostico = models.AutoField(db_column='idDiagnostico', primary_key=True)  # Field name made lowercase.
-    idpaciente = models.ForeignKey(Paciente, models.DO_NOTHING, db_column='idPaciente')  # Field name made lowercase.
-    fecha = models.IntegerField()
-    descripcion = models.CharField(max_length=256)
-    gravedad = models.CharField(max_length=256)
-    tratamiento = models.CharField(max_length=256)
-    codigo_cie_10 = models.CharField(db_column='codigo_CIE-10', max_length=10)  # Field name made lowercase. Field renamed to remove unsuitable characters.
+# class Diagnostico(models.Model):
+#     iddiagnostico = models.AutoField(db_column='idDiagnostico', primary_key=True)  # Field name made lowercase.
+#     idpaciente = models.ForeignKey(Paciente, models.DO_NOTHING, db_column='idPaciente')  # Field name made lowercase.
+#     fecha = models.IntegerField()
+#     descripcion = models.CharField(max_length=256)
+#     gravedad = models.CharField(max_length=256)
+#     tratamiento = models.CharField(max_length=256)
+#     codigo_cie_10 = models.CharField(db_column='codigo_CIE-10', max_length=10)  # Field name made lowercase. Field renamed to remove unsuitable characters.
 
-    class Meta:
-        managed = True
-        db_table = 'diagnostico'
+#     class Meta:
+#         managed = True
+#         db_table = 'diagnostico'
 
 
 class ObraSocial(models.Model):

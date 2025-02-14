@@ -6,16 +6,20 @@ from habitaciones.models import Cama
 # Create your models here.
 
 
-class Atencion(models.Model):
-    idatencion = models.AutoField(db_column='idAtencion', primary_key=True)  # Field name made lowercase.
+class Diagnostico(models.Model):
+    iddiagnostico = models.AutoField(db_column='idDiagnostico', primary_key=True)  # Field name made lowercase.
     idmedico = models.ForeignKey(Medico, models.DO_NOTHING, db_column='idMedico')  # Field name made lowercase.
-    idpaciente = models.ForeignKey(Paciente, models.DO_NOTHING, db_column='idPaciente')  # Field name made lowercase.
+    idpaciente = models.ForeignKey(Paciente, models.DO_NOTHING, db_column='idPaciente')
+    idinternacion = models.ForeignKey('Internacion', models.DO_NOTHING, db_column='idInternacion', blank=True, null=True)  # Field name made lowercase.
     fecha = models.DateTimeField(null=True, blank=True,default=None)
-    idmedico_derivado= models.ForeignKey(Medico, models.DO_NOTHING, db_column='idMedico_derivado', blank=True, null=True,related_name='atenciones_como_derivado')  # Field name made lowercase.
+    idmedico_derivado= models.ForeignKey(Medico, models.DO_NOTHING, db_column='idMedico_derivado', blank=True, null=True,related_name='diagnostico_como_derivado')  # Field name made lowercase.
     detalles = models.CharField(max_length=256,null=True, blank=True)
+    gravedad = models.CharField(max_length=256,null=True, blank=True)
+    tratamiento = models.CharField(max_length=256,null=True, blank=True)
+    
     class Meta:
         managed = True
-        db_table = 'atencion'
+        db_table = 'diagnostico'
         
 class Internacion(models.Model):
     idinternacion = models.AutoField(db_column='idInternacion', primary_key=True)  # Field name made lowercase.
