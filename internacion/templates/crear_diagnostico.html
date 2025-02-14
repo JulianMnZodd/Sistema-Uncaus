@@ -1,0 +1,14 @@
+<!-- filepath: /C:/Users/julia/Documents/sistemuncaus/templates/internacion/crear_diagnostico.html -->
+{% extends '_base.html' %}
+
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Crear Diagnóstico para {{ paciente.nombre }} {{ paciente.apellido }}</h2>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4">Guardar</button>
+  {% comment %} <a href="{% url 'detalle_diagnostico' internacion.idinternacion %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Cancelar</a> {% endcomment %}
+</form>
+
+{% endblock content %}

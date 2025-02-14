@@ -29,12 +29,15 @@
       <td class="border px-4 py-2">{{ internacion.nota_ingreso }}</td>
       <td class="border px-4 py-2">
         {% if es_medico %}
-        <a href="{% url 'crear_atencion' internacion.idinternacion %}" class="flex bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded">Crear Atención</a>
-        <a href="{% url 'listar_atenciones' internacion.idpaciente.idpaciente %}" class="flex bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded">Ver Atenciones</a>
-        {% elif es_enfermero %}
-        <a href="{% url 'seguimiento' internacion.idinternacion %}" class="bg-green-500 hover:bg-green-700 text-black font-bold py-2 px-4 rounded">Crear seguimiento</a>
+        {% if internacion.diagnostico_set.exists %}
+          <a href="{% url 'detalle_diagnostico' internacion.idinternacion %}" class="flex bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded">Ver Diagnóstico</a>
+        {% else %}
+          <a href="{% url 'crear_diagnostico' internacion.idinternacion %}" class="flex bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded">Crear Diagnóstico</a>
         {% endif %}
-      </td>
+      {% elif es_enfermero %}
+        <a href="{% url 'seguimiento' internacion.idinternacion %}" class="bg-green-500 hover:bg-green-700 text-black font-bold py-2 px-4 rounded">Crear seguimiento</a>
+      {% endif %}
+    </td>
     </tr>
     {% endfor %}
   </tbody>
