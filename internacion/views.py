@@ -62,7 +62,7 @@ def seleccionar_cama(request, paciente_id):
 
 
 def listar_internaciones(request):
-    internaciones = Internacion.objects.all()
+    internaciones = Internacion.objects.filter(fecha_alta__isnull=True)
     es_medico = hasattr(request.user, "medico")
     es_enfermero = hasattr(request.user, "enfermero")
     return render(

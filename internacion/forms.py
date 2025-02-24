@@ -31,8 +31,24 @@ class DiagnosticoForm(forms.ModelForm):
             'detalles': forms.Textarea(attrs={'rows': 4}),   
             'gravedad': forms.TextInput(attrs={'placeholder': 'Ej: Leve'}),
             'tratamiento': forms.Textarea(attrs={'rows': 4}),
+            'idmedico_derivado': forms.Select(attrs={'class': 'form-control'} ),
+        }
+        labels = {
+            'fecha': 'Fecha',
+            'detalles': 'Detalles',
+            'gravedad': 'Gravedad',
+            'tratamiento': 'Tratamiento',
+            'idmedico_derivado': 'Médico Derivado(opcional)',
         }
         
+
+class SeguimientoForm(forms.ModelForm):
+    class Meta:
+        model = Seguimiento
+        fields = ["observacion"]
+        widgets = {
+            "observacion": forms.Textarea(attrs={"rows": 4}),
+        }
 
 
 class MedicacionForm(forms.ModelForm):
@@ -48,12 +64,10 @@ class SignosVitalesForm(forms.ModelForm):
     class Meta:
         model = SignosVitales
         fields = ["temperatura_corporal", "pulso", "frecuencia_respiratoria"]
-
-
-class SeguimientoForm(forms.ModelForm):
-    class Meta:
-        model = Seguimiento
-        fields = ["observacion"]
         widgets = {
-            "observacion": forms.Textarea(attrs={"rows": 4}),
+            "temperatura_corporal": forms.NumberInput(attrs={"step": 0.1}),
+            "pulso": forms.NumberInput(attrs={"step": 1}),
+            "frecuencia_respiratoria": forms.NumberInput(attrs={"step": 1}),
         }
+
+

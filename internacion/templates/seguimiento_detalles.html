@@ -5,8 +5,7 @@
 {% block content %}
 <h2 class="text-xl font-bold mb-4">Detalles del Seguimiento</h2>
 
-<p><strong>ID:</strong> {{ seguimiento.idseguimiento }}</p>
-<p><strong>Enfermero:</strong> {{ seguimiento.idenfermero }}</p>
+<p><strong>Enfermero:</strong> {{ seguimiento.idenfermero.persona.first_name }}, {{ seguimiento.idenfermero.persona.last_name }}</p>
 <p><strong>Observación:</strong> {{ seguimiento.observacion }}</p>
 
 <h3 class="text-lg font-bold mb-2">Medicación</h3>

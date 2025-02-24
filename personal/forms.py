@@ -23,14 +23,26 @@ class CustomUserCreationForm(UserCreationForm):
             'domicilio': 'Domicilio',
             'genero': 'Género',
             'fecha_nacimiento': 'Fecha de nacimiento',
+            
+            }
+        widgets = {
+            'fecha_nacimiento': forms.DateInput(attrs={'type': 'date'}),
+            'dni': forms.NumberInput(attrs={'min': 0}),
+            'telefono': forms.NumberInput(attrs={'min': 0}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'username': forms.EmailInput(attrs={'class': 'form-control'}),
         }
+        
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
         model = Persona
-        fields = ['first_name', 'last_name', 'email', 'telefono', 'domicilio']
+        fields = ['first_name', 'last_name', 'email', 'telefono', 'domicilio',]
         labels = {
             'first_name': 'Nombre',
             'last_name': 'Apellido',
+            'password': 'Contraseña',
         }
 
 class MedicoForm(forms.ModelForm):

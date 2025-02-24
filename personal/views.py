@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
@@ -6,13 +5,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from personal.forms import CustomAuthenticationForm
-
+from .forms import CustomUserCreationForm, MedicoForm, RecepcionistaForm, EnfermeroForm
+from personal.models import Medico, Enfermero, Recepcionista
 
 class CustomLoginView(LoginView):
     template_name = 'login.html'
     authentication_form = CustomAuthenticationForm
     redirect_authenticated_user = True
-    success_url = reverse_lazy('home') 
+    success_url = reverse_lazy('lista_habitaciones') 
 
 def registro(request):
     if request.method == 'POST':
@@ -25,10 +25,7 @@ def registro(request):
         form = CustomUserCreationForm()
     return render(request, 'registro.html', {'form': form})
 
-def home(request):
-    return render(request, 'home.html')
-      
-from .forms import CustomUserCreationForm, MedicoForm, RecepcionistaForm, EnfermeroForm
+
 
 @login_required
 def crear_medico(request):
@@ -48,6 +45,8 @@ def crear_medico(request):
 
             messages.success(request, '¡Médico creado exitosamente!')
             return redirect('crear_medico')
+        else:
+            messages.error(request, 'Por favor, corrige los errores en el formulario.')
     else:
         persona_form = CustomUserCreationForm()
         medico_form = MedicoForm()
@@ -112,3 +111,52 @@ def crear_recepcionista(request):
         'persona_form': persona_form,
         'recepcionista_form': recepcionista_form,
     })
+
+def listar_medicos(request):
+    medicos = Medico.objects.all()
+    return render(request, 'listar_medicos.html', {'medicos': medicos})
+
+def editar_medico(request, id):
+    medico = get_object_or_404(Medico, id=id)
+    if request.method == 'POST':
+        form = MedicoForm(request.POST, instance=medico)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '¡Médico editado exitosamente!')
+            return redirect('listar_medicos')
+    else:
+        form = MedicoForm(instance=medico)
+    return render(request, 'editar_medicos.html', {'form': form})
+
+
+def listar_enfermeros(request):
+    enfermeros = Enfermero.objects.all()
+    return render(request, 'listar_enfermeros.html', {'enfermeros': enfermeros})
+
+def editar_enfermero(request, id):
+    enfermero = get_object_or_404(Enfermero, id=id)
+    if request.method == 'POST':
+        form = EnfermeroForm(request.POST, instance=enfermero)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '¡Enfermero editado exitosamente!')
+            return redirect('listar_enfermeros')
+    else:
+        form = EnfermeroForm(instance=enfermero)
+    return render(request, 'editar_enfermeros.html', {'form': form})
+
+def listar_recepcionistas(request):
+    recepcionistas = Recepcionista.objects.all()
+    return render(request, 'listar_recepcionistas.html', {'recepcionistas': recepcionistas})
+
+def editar_recepcionista(request, id):
+    recepcionista = get_object_or_404(Recepcionista, id=id)
+    if request.method == 'POST':
+        form = RecepcionistaForm(request.POST, instance=recepcionista)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '¡Recepcionista editado exitosamente!')
+            return redirect('listar_recepcionistas')
+    else:
+        form = RecepcionistaForm(instance=recepcionista)
+    return render(request, 'editar_recepcionistas.html', {'form': form})

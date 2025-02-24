@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'widget_tweaks', #--> Para modificar los widgets de los formularios
     "daphne",
     'django.contrib.staticfiles',
     'channels',#.--> Para actualizar el cambio de estados de la cama en tiempo real
