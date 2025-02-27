@@ -1,14 +1,43 @@
-{% extends "_base.html" %} {% block content %} {{error}}
-<form method="post">
-  {% csrf_token %}
-  <h2>Datos de la Persona</h2>
-  {{ persona_form.as_p }}
-  
-  <h2>Datos del Médico</h2>
-  {{ medico_form.as_p }}
+{% extends "_base.html" %}
+{% load widget_tweaks %}
 
-  <button type="submit">Crear Médico</button>
-</form>
+{% block content %}
+<div class="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg">
+  <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">Registro de Médico</h1>
 
+  <!-- Mensajes de error y éxito -->
+  {% include "partials/messages.html" %}
 
-{% endblock content %}
+  <form method="post" class="space-y-8">
+    {% csrf_token %}
+
+    <!-- Sección Persona -->
+    <div class="space-y-6">
+      <h2 class="text-xl font-semibold text-gray-700 border-b pb-2">Datos Personales</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for field in persona_form %}
+          {% include "partials/form_field.html" with field=field %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Sección Médico -->
+    <div class="space-y-6">
+      <h2 class="text-xl font-semibold text-gray-700 border-b pb-2">Datos Profesionales</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for field in medico_form %}
+          {% include "partials/form_field.html" with field=field %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Botón de envío -->
+    <button type="submit" class="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 flex items-center justify-center">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+      </svg>
+      Registrar Médico
+    </button>
+  </form>
+</div>
+{% endblock %}

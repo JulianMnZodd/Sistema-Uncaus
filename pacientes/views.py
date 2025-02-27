@@ -2,13 +2,15 @@ from django.shortcuts import render,redirect,get_object_or_404
 from pacientes.models import Paciente
 from .forms import PacienteForm
 from internacion.models import Internacion
+from django.contrib import messages
 
 def crear_paciente(request):
     if request.method == 'POST':
         form = PacienteForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('listar_pacientes')  # Redirige a la lista de pacientes después de crear uno nuevo
+            messages.success(request, '¡Paciente creado exitosamente!')
+            return redirect('listar_pacientes')
     else:
         form = PacienteForm()
     return render(request, 'crear_paciente.html', {'form': form})

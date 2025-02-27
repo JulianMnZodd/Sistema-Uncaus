@@ -9,35 +9,33 @@ from .models import Paciente, Medico, Enfermero, Internacion
 @login_required
 def asignar_cama(request, idcama):
     cama = get_object_or_404(Cama, idcama=idcama)
-    paciente = None
+    pacientes = Paciente.objects.all()
 
     if request.method == "POST":
         form = AsignarCamaForm(request.POST)
         if form.is_valid():
-            paciente = form.cleaned_data["paciente"]
+            paciente_id = form.cleaned_data["paciente_id"]
+            paciente = get_object_or_404(Paciente, idpaciente=paciente_id)
             nota_ingreso = form.cleaned_data["nota_ingreso"]
             action = request.POST.get('action')
 
             if action == 'asignar':
-                # Crear una nueva instancia de Internacion
                 internacion = Internacion.objects.create(
                     idpaciente=paciente,
-                    fecha_admicion=timezone.now(),
+                    fecha_admision=timezone.now(),
                     cama=cama,
                     nota_ingreso=nota_ingreso,
                 )
-
-                # Cambiar el estado de la cama a "Ocupada"
                 cama.estado = "O"
                 cama.save()
-
                 return redirect('lista_habitaciones')
             elif action == 'generar_pdf':
                 return generar_consentimiento_pdf(request, paciente.idpaciente)
     else:
         form = AsignarCamaForm()
 
-    return render(request, 'asignar_cama.html', {'form': form, 'cama': cama, 'paciente': paciente})
+    return render(request, 'asignar_cama.html', {'form': form, 'cama': cama, 'pacientes': pacientes})
+
 
 @login_required
 def generar_consentimiento(request):
@@ -62,7 +60,7 @@ def seleccionar_cama(request, paciente_id):
 
 
 def listar_internaciones(request):
-    internaciones = Internacion.objects.all()
+    internaciones = Internacion.objects.filter(fecha_alta__isnull=True)
     es_medico = hasattr(request.user, "medico")
     es_enfermero = hasattr(request.user, "enfermero")
     return render(

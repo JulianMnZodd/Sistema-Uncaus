@@ -25,7 +25,7 @@ class Internacion(models.Model):
     idinternacion = models.AutoField(db_column='idInternacion', primary_key=True)  # Field name made lowercase.
     idpaciente = models.ForeignKey(Paciente, models.DO_NOTHING, db_column='idPaciente')  # Field name made lowercase.
     cama = models.ForeignKey(Cama, on_delete=models.CASCADE)
-    fecha_admicion = models.DateTimeField()
+    fecha_admision = models.DateTimeField()
     fecha_alta = models.DateTimeField(null=True, blank=True)
     nota_ingreso = models.CharField(max_length=256)
 
@@ -54,13 +54,15 @@ class SignosVitales(models.Model):
     class Meta:
         managed = True
         db_table = 'signos_vitales'
+        
+from django.utils import timezone
 
 class Seguimiento(models.Model):
     idseguimiento = models.AutoField(db_column='idSeguimiento', primary_key=True)  # Field name made lowercase.
     idenfermero = models.ForeignKey(Enfermero, models.DO_NOTHING, db_column='idEnfermero')  # Field name made lowercase.
     observacion = models.CharField(max_length=200)
     idinternacion = models.ForeignKey(Internacion, models.DO_NOTHING, db_column='idInternacion')  # Field name made lowercase.
-
+    fecha = models.DateTimeField(auto_now_add=True)
     class Meta:
         managed = True
         db_table = 'seguimiento'

@@ -1,25 +1,41 @@
 from django import forms
 from .models import Diagnostico, Seguimiento, Medicacion, SignosVitales
 from .models import Paciente, Cama
+from django_select2.forms import ModelSelect2Widget
 
+
+from django import forms
+
+from django import forms
+from django.core.exceptions import ValidationError
+from .models import Paciente, Internacion
 
 class AsignarCamaForm(forms.Form):
-    paciente = forms.ModelChoiceField(
-        queryset=Paciente.objects.all(), label="Seleccionar Paciente"
-    )
-    # fecha_alta = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), label="Fecha de Alta")
+    paciente_id = forms.IntegerField(widget=forms.HiddenInput())  # Campo oculto para el ID del paciente
     nota_ingreso = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": 4}), label="Nota de Ingreso"
+        widget=forms.Textarea(attrs={
+            "rows": 4,
+            "class": "w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+        }), 
+        label="Nota de Ingreso"
     )
 
-    def clean_paciente(self):
-        paciente = self.cleaned_data["paciente"]
-        camas_ocupadas = Cama.objects.filter(paciente=paciente, estado="O")
-        if camas_ocupadas.exists():
-            raise forms.ValidationError(
-                "Este paciente ya está asignado a una cama ocupada."
-            )
-        return paciente
+    def clean_paciente_id(self):
+        paciente_id = self.cleaned_data.get('paciente_id')
+        if not paciente_id:
+            raise ValidationError("Debes seleccionar un paciente.")
+
+        # Verificar si el paciente ya está asignado a una cama y no ha sido dado de alta
+        paciente = Paciente.objects.get(idpaciente=paciente_id)
+        internacion_activa = Internacion.objects.filter(
+            idpaciente=paciente,
+            fecha_alta__isnull=True  # Solo si no tiene fecha de alta
+        ).exists()
+
+        if internacion_activa:
+            raise ValidationError("Este paciente ya está asignado a una cama y no ha sido dado de alta.")
+
+        return paciente_id
 
 
 class DiagnosticoForm(forms.ModelForm):
@@ -31,8 +47,24 @@ class DiagnosticoForm(forms.ModelForm):
             'detalles': forms.Textarea(attrs={'rows': 4}),   
             'gravedad': forms.TextInput(attrs={'placeholder': 'Ej: Leve'}),
             'tratamiento': forms.Textarea(attrs={'rows': 4}),
+            'idmedico_derivado': forms.Select(attrs={'class': 'form-control'} ),
+        }
+        labels = {
+            'fecha': 'Fecha',
+            'detalles': 'Detalles',
+            'gravedad': 'Gravedad',
+            'tratamiento': 'Tratamiento',
+            'idmedico_derivado': 'Médico Derivado(opcional)',
         }
         
+
+class SeguimientoForm(forms.ModelForm):
+    class Meta:
+        model = Seguimiento
+        fields = ["observacion"]
+        widgets = {
+            "observacion": forms.Textarea(attrs={"rows": 4}),
+        }
 
 
 class MedicacionForm(forms.ModelForm):
@@ -48,12 +80,10 @@ class SignosVitalesForm(forms.ModelForm):
     class Meta:
         model = SignosVitales
         fields = ["temperatura_corporal", "pulso", "frecuencia_respiratoria"]
-
-
-class SeguimientoForm(forms.ModelForm):
-    class Meta:
-        model = Seguimiento
-        fields = ["observacion"]
         widgets = {
-            "observacion": forms.Textarea(attrs={"rows": 4}),
+            "temperatura_corporal": forms.NumberInput(attrs={"step": 0.1}),
+            "pulso": forms.NumberInput(attrs={"step": 1}),
+            "frecuencia_respiratoria": forms.NumberInput(attrs={"step": 1}),
         }
+
+
