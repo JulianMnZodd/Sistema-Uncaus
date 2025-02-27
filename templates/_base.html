@@ -13,11 +13,12 @@
     <link rel="stylesheet" href="{% static 'src/output.css' %}" />
     {% endcompress %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.5.1/flowbite.min.css" />
+    {{ select2_css }}
   </head>
 
   <body class="bg-green-50">
     <!-- Add this -->
-
+    {{ select2_js }}
     <nav
       class="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700"
     >
