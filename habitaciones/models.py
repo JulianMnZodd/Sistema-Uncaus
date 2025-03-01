@@ -15,14 +15,22 @@ class Sector(models.Model):
         db_table = 'sector'
 
 class Habitacion(models.Model):
+    
+    TIPOS_HABITACION = [
+        ('VIP', 'VIP'),
+        ('UCI', 'UCI'),
+        ('FEM', 'Femenina'),
+        ('MIX', 'Mixta'),
+        ('PED', 'Pediátrica'),
+        ('MAT', 'Maternidad'),
+        ('PSI', 'Psiquiátrica'),
+    ]
+    
     idhabitacion = models.AutoField(db_column='idHabitacion', primary_key=True)  # Field name made lowercase.
-    idsector = models.ForeignKey(Sector, models.DO_NOTHING, db_column='idSector')  # Field name made lowercase.
+    idsector = models.ForeignKey(Sector,on_delete=models.PROTECT, db_column='idSector')  # Field name made lowercase.
     numero = models.IntegerField()
-    piso = models.IntegerField()
     cantidad_camas = models.IntegerField()
-    es_privada = models.BooleanField()
-    es_vip = models.BooleanField()
-    tipo = models.CharField(max_length=256)
+    tipo = models.CharField(max_length=3, choices=TIPOS_HABITACION)
     
     def __str__(self):
         return f"{self.numero}"
@@ -40,9 +48,9 @@ class Cama(models.Model):
     )
     
     idcama = models.AutoField(db_column='idCama', primary_key=True)  # Field name made lowercase.
-    habitacion = models.ForeignKey(Habitacion, models.DO_NOTHING, db_column='idHabitacion', related_name='camas')  # Relación inversa.
+    habitacion = models.ForeignKey(Habitacion,on_delete=models.CASCADE, db_column='idHabitacion', related_name='camas')  # Relación inversa.
     estado = models.CharField(max_length=1, choices=ESTADOS, default='L')
-    paciente = models.ForeignKey(Paciente, models.DO_NOTHING, db_column='idPaciente',blank=True,null=True)  # Field name made lowercase.
+    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, db_column='idPaciente',blank=True,null=True)  # Field name made lowercase.
     
     def liberar(self):
         self.estado = 'L'

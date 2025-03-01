@@ -116,25 +116,32 @@ def listar_medicos(request):
     medicos = Medico.objects.all()
     return render(request, 'listar_medicos.html', {'medicos': medicos})
 
-def editar_medico(request, id):
-    medico = get_object_or_404(Medico, id=id)
-    if request.method == 'POST':
+@login_required
+def editar_medico(request, id_medico):
+    medico = get_object_or_404(Medico, persona_id=id_medico)
+    if request.method == "POST":
         form = MedicoForm(request.POST, instance=medico)
         if form.is_valid():
             form.save()
-            messages.success(request, '¡Médico editado exitosamente!')
-            return redirect('listar_medicos')
+            return redirect('lista_medicos')
     else:
         form = MedicoForm(instance=medico)
-    return render(request, 'editar_medicos.html', {'form': form})
+    return render(request, 'editar_medico.html', {'form': form, 'medico': medico})
+
+def eliminar_medico(request, id_medico):
+    medico = get_object_or_404(Medico, persona_id=id_medico)
+    medico.delete()
+    messages.success(request, '¡Médico eliminado exitosamente!')
+    return redirect('listar_medicos')
+
 
 
 def listar_enfermeros(request):
     enfermeros = Enfermero.objects.all()
     return render(request, 'listar_enfermeros.html', {'enfermeros': enfermeros})
 
-def editar_enfermero(request, id):
-    enfermero = get_object_or_404(Enfermero, id=id)
+def editar_enfermero(request, enfermero_id):
+    enfermero = get_object_or_404(Enfermero, id=enfermero_id)
     if request.method == 'POST':
         form = EnfermeroForm(request.POST, instance=enfermero)
         if form.is_valid():
@@ -145,12 +152,18 @@ def editar_enfermero(request, id):
         form = EnfermeroForm(instance=enfermero)
     return render(request, 'editar_enfermeros.html', {'form': form})
 
+def eliminar_enfermero(request, id_enfermero):
+    enfermero = get_object_or_404(Enfermero, persona_id=id_enfermero)
+    enfermero.delete()
+    messages.success(request, '¡Enfermero eliminado exitosamente!')
+    return redirect('listar_enfermeros')
+
 def listar_recepcionistas(request):
     recepcionistas = Recepcionista.objects.all()
     return render(request, 'listar_recepcionistas.html', {'recepcionistas': recepcionistas})
 
-def editar_recepcionista(request, id):
-    recepcionista = get_object_or_404(Recepcionista, id=id)
+def editar_recepcionista(request, id_recepcionista):
+    recepcionista = get_object_or_404(Recepcionista, persona_id=id_recepcionista)
     if request.method == 'POST':
         form = RecepcionistaForm(request.POST, instance=recepcionista)
         if form.is_valid():
@@ -160,3 +173,9 @@ def editar_recepcionista(request, id):
     else:
         form = RecepcionistaForm(instance=recepcionista)
     return render(request, 'editar_recepcionistas.html', {'form': form})
+
+def eliminar_recepcionista(request, id_recepcionista):
+    recepcionista = get_object_or_404(Recepcionista, persona_id=id_recepcionista)
+    recepcionista.delete()
+    messages.success(request, '¡Recepcionista eliminado exitosamente!')
+    return redirect('listar_recepcionistas')
